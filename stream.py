@@ -1,0 +1,135 @@
+# coding: utf-8
+import re, time, sys, codecs
+import tweepy
+from threading import Thread
+from Queue import Queue
+import logging
+import logging.config
+from lib.db_info import id_info
+import ConfigParser
+
+# ログの設定
+logging.config.fileConfig('./log/log.conf')
+log = logging.getLogger('getlog')
+
+# 設定の読み込み
+config = ConfigParser.ConfigParser()
+config.read('./conf/settings.conf')
+
+auth = tweepy.OAuthHandler(config.get('twitter', 'CK'), config.get('twitter', 'CS'))
+auth.set_access_token(config.get('twitter', 'AT'), config.get('twitter', 'AS'))
+api = tweepy.API(auth_handler=auth, wait_on_rate_limit=True)
+mydata = api.me()
+myid = mydata.id
+
+
+class Listener(tweepy.streaming.StreamListener):
+    def __init__(self, queue):
+        super(Listener, self).__init__()
+        self.queue = queue
+
+    def on_status(self, status):
+        
+        if status.in_reply_to_user_id == myid:
+            self.queue.put(status)
+        else:
+            pass
+
+    def on_error(self, status):
+        print("Receive Error Code: " + status)
+
+
+class StreamRecieverThread(Thread):
+    def __init__(self, queue):
+        super(StreamRecieverThread, self).__init__()
+        self.daemon = True
+        self.queue = queue
+
+    def run(self):
+        l = Listener(self.queue)
+        stream = tweepy.Stream(auth, l)
+        while True:
+            try:
+                stream.userstream()
+            except Exception as e:
+                api.send_direct_message(screen_name=config.get('twitter', 'id'), text="Stream down. And now restarting. Wait 60s...")
+                log.exception(e)
+                time.sleep(60)
+                stream = tweepy.Stream(auth, l)
+                api.send_direct_message(screen_name=config.get('twitter', 'id'), text="Start streaming.")
+
+
+def get_info(id):
+    sys.stdout = codecs.lookup('utf_8')[-1](sys.stdout)
+    try:
+        info = id_info(id)
+    except Exception as e:
+        log.exception(e)
+    if info is not False:
+        if info is not 0:
+            try:
+                subject = info.subject.decode('utf-8')
+                teacher = info.teacher.decode('utf-8')
+                week = info.week.decode('utf-8')
+                period = info.period.decode('utf-8')
+                detail = info.detail.decode('utf-8')
+                return u"授業名：%s\n教員名：%s\n日程：%s, %s\n詳細：%s" % (subject, teacher, week, period, detail)
+            except Exception as e:
+                log.exception(e)
+        else:
+            return u"お問い合わせされた授業関係連絡は現在存在しません。"
+
+    else:
+        return u"DBエラーです。情報が取得できませんでした。"
+
+
+def tweetassembler(**args):
+    in_reply_to_status = args['in_reply_to_status']
+    if in_reply_to_status is not None:
+        regex = u'.*詳し.*'
+        if re.match(regex, in_reply_to_status.text, re.U):
+            # リプライ元のIDを取得
+            id = in_reply_to_status.in_reply_to_status_id
+            # リプライ元のステータスを取得
+            qkou_status = api.get_status(id) 
+            entities = qkou_status.entities['hashtags']
+            # ハッシュタグを含まない場合の判定
+            if len(entities) > 0:
+                hashtag = entities[0]['text'] 
+                # ハッシュタグから数字だけ抽出
+                number = re.search("(?<=lec)[0-9]*", hashtag)
+                qkou_id = number.group()
+                # DBから情報を取得
+                dm_text = get_info(qkou_id)
+                try:
+                    api.send_direct_message(user_id=in_reply_to_status.user.id, text=dm_text)
+                except Exception as e:
+                    log.exception(e)
+            else:
+                pass
+
+
+class CoreThread(Thread):
+    def __init__(self, queue):
+        super(CoreThread, self).__init__()
+        self.daemon = True
+        self.queue = queue
+
+    def run(self):
+        while True:
+            obj = self.queue.get()
+            tweetassembler(in_reply_to_status=obj)
+
+
+def StartThreads():
+    q = Queue()
+    CoreTh = CoreThread(q)
+    StreamTh = StreamRecieverThread(q)
+    CoreTh.start()
+    StreamTh.start()
+    while True:
+        time.sleep(1)
+
+if __name__ == "__main__":
+    api.send_direct_message(screen_name=config.get('twitter', 'id'), text="Qkoubot start.")
+    StartThreads()
