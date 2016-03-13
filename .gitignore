@@ -2,3 +2,4 @@ conf/settings.conf
 *.log
 .DS_Store
 *.swp
+*.pyc
