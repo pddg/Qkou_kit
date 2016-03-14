@@ -2,7 +2,7 @@
 京都工芸繊維大学の非公式休講通知botです。仲良くしてあげてね。  
 [@Qkou_kit](https://twitter.com/Qkou_kit)
 
-## Descriptions
+## 概要
 休講通知、また授業関係連絡について、ただWeb上に通知されるだけ、しかもわざわざログインしないと見れないという
 現在の状況に対抗するための暫定的手段です。このクソbotを見た大学公式が似た機能を実装してくれますように。
 
@@ -39,6 +39,9 @@ Ubuntu Server 14.04 LTSおよびMac OS X 10.11.3(pyenv及びvirtualenv使用)に
 ```bash
 $ git clone https://github.com/pddg/Qkou_kit.git
 $ cd Qkou_kit
+# 各種必要なパッケージがないとモジュールインストール時にエラーが出る。
+# 以下はubuntuのコンテナで必要だった例
+$ sudo apt-get install libxml2 libxslt1-dev zlib1g-dev 
 $ pip install -r requirements.txt
 ```
 
@@ -105,4 +108,36 @@ $ cat log/debug.log
 うまくいけばdebug.logに以上のような感じで出力され、error.logにはなにも出力されていないと思います。  
 一度実行して成功すれば、**コメントアウトは元に戻してください。**
 
+また、実行時にconfigparserがセクションエラーを吐いた時は、設定ファイルのミス、または実行時のカレントディレクトリがQkou_kit(git cloneしたディレクトリ)になっているか確認してください。
 
+cronへの登録は以下のように行います。例として、新規情報の確認は5分に一回、一日の休講情報のツイートは毎朝7時5分に実行されるようにしています。
+
+```bash
+$ crontab -e
+*/5 * * * * cd /path/to/Qkou_kit;/path/to/python ../Qkou_kit
+5 7 * * * cd /path/to/Qkou_kit;/path/to/python today.py
+```
+
+最後に、stream.pyを起動させて終わりです。
+
+```bash
+$ vim start.sh
+nohup /path/to/python stream.py
+$ sh start.sh
+```
+
+ログは自動的にdebug.logまたはerror.logに書き込まれますが、stream.pyにおいては例外的にストリーム中にエラーが起こった場合、settings.pyに書いたidあてにダイレクトメッセージで通知が行われます。
+
+##今後の課題
+
+* 初期セットアップ時の設定が面倒
+* ストリームがたまに落ちて復帰してこない時がある
+* 実行が遅い(もう限界？)
+* 連続してツイートする際の遅延をもうちょっとインテリジェンスに
+* サーバの維持費(お金欲しい)
+
+
+##作者
+[@pudding_info](https://twitter.com/pudding_info)  
+ホームページ及びブログは以下  
+[poyo.info](https://www.poyo.info)
