@@ -3,6 +3,7 @@ from lib.add_db import add_info, add_cancel
 from lib.login import soupinfo
 from lib.db_info import del_deactive_info
 from lib.db_cancel import del_deactive_cancel
+import lib.tweeter
 import ConfigParser
 import logging.config
 import logging
@@ -44,8 +45,7 @@ class TweetThread(Thread):
                 # 1.5^(ループ数)秒待機
                 w = pow(a, i)
                 time.sleep(w)
-                # lib.tweeter.tweet(t)
-                print t
+                lib.tweeter.tweet(t)
 
 
 class GetInfoThread(Thread):
