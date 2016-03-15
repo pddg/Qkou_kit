@@ -140,3 +140,4 @@ def todayinfo(day):
     for info in session.query(Cancel).filter(Cancel.day == day).all():
         infolist.append(info.sub)
     return infolist
+

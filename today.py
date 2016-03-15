@@ -21,7 +21,7 @@ def del_yesterday_info():
     # アカウント情報及びTLの取得
     myinfo = api.me()
     try:
-        tweets = tweepy.Cursor(api.user_timeline, id=myinfo).items(100)
+        tweets = tweepy.Cursor(api.user_timeline, id=myinfo.id).items(100)
     except Exception as e:
         log.exception(e)
 
@@ -48,16 +48,17 @@ def get_today_info():
     today = todayinfo(date)
 
     # Tweet
-    if today is []:
-        tweet(u"%s 本日休講はありません" % (date))
+    if len(today) is 0:
+        print(u"%s 本日休講はありません" % (date))
     else:
         i = ", ".join(today)
         t = u"%s 本日の休講\n%s" % (date, i)
         if len(t) < 140:
-            tweet(t)
+            print type(today)
+            print(t)
         else:
-            tweet(t[0:140])
+            print(t[0:140])
 
 if __name__ == "__main__":
-    del_yesterday_info()
+    # del_yesterday_info()
     get_today_info()
