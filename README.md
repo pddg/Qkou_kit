@@ -1,9 +1,5 @@
 # Qkou_kit
-<<<<<<< HEAD
 京都工芸繊維大学の非公式休講通知botです。仲良くしてあげてね。
-=======
-京都工芸繊維大学の非公式休講通知botです。仲良くしてあげてね。  
->>>>>>> 44a24eb0c208327027569d21bf8be56a75998b7b
 [@Qkou_kit](https://twitter.com/Qkou_kit)
 
 ## 概要
@@ -45,11 +41,7 @@ $ git clone https://github.com/pddg/Qkou_kit.git
 $ cd Qkou_kit
 # 各種必要なパッケージがないとモジュールインストール時にエラーが出る。
 # 以下はubuntuのコンテナで必要だった例
-<<<<<<< HEAD
 $ sudo apt-get install libxml2 libxslt1-dev zlib1g-dev
-=======
-$ sudo apt-get install libxml2 libxslt1-dev zlib1g-dev 
->>>>>>> 44a24eb0c208327027569d21bf8be56a75998b7b
 $ pip install -r requirements.txt
 ```
 
@@ -115,9 +107,6 @@ $ cat log/debug.log
 ```
 <<<<<<< HEAD
 うまくいけばdebug.logに以上のような感じで出力され、error.logにはなにも出力されていないと思います。
-=======
-うまくいけばdebug.logに以上のような感じで出力され、error.logにはなにも出力されていないと思います。  
->>>>>>> 44a24eb0c208327027569d21bf8be56a75998b7b
 一度実行して成功すれば、**コメントアウトは元に戻してください。**
 
 また、実行時にconfigparserがセクションエラーを吐いた時は、設定ファイルのミス、または実行時のカレントディレクトリがQkou_kit(git cloneしたディレクトリ)になっているか確認してください。
@@ -150,11 +139,6 @@ $ sh start.sh
 
 
 ##作者
-<<<<<<< HEAD
 [@pudding_info](https://twitter.com/pudding_info)
 ホームページ及びブログは以下
-=======
-[@pudding_info](https://twitter.com/pudding_info)  
-ホームページ及びブログは以下  
->>>>>>> 44a24eb0c208327027569d21bf8be56a75998b7b
 [poyo.info](https://www.poyo.info)
