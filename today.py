@@ -60,5 +60,5 @@ def get_today_info():
             print(t[0:140])
 
 if __name__ == "__main__":
-    # del_yesterday_info()
+    del_yesterday_info()
     get_today_info()
