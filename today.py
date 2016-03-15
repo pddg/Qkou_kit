@@ -49,15 +49,14 @@ def get_today_info():
 
     # Tweet
     if len(today) is 0:
-        print(u"%s 本日休講はありません" % (date))
+        tweet(u"%s 本日休講はありません" % (date))
     else:
         i = ", ".join(today)
         t = u"%s 本日の休講\n%s" % (date, i)
         if len(t) < 140:
-            print type(today)
-            print(t)
+            tweet(t)
         else:
-            print(t[0:140])
+            tweet(t[0:140])
 
 if __name__ == "__main__":
     del_yesterday_info()
