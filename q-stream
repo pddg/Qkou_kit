@@ -1,0 +1,81 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          q-stream
+# Required-Start:    $network
+# Required-Stop:
+# Should-Start:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Qkou_bot
+# Description: Processing twitter streaming API.
+### END INIT INFO
+
+# Settings
+QKOU_PATH='/home/kyukou/Qkou_kit'
+PYTHON_PATH='/usr/bin/python'
+USERNAME='kyukou'
+SERVICE='stream.py'
+LOG='/dev/null'
+
+ME=`whoami`
+as_user() {
+  if [ "$ME" = "$USERNAME" ] ; then
+    bash -c "$1"
+  else
+    su - "$USERNAME" -c "$1"
+  fi
+}
+
+stream_start() {
+  if  pgrep -u $USERNAME -f $SERVICE > /dev/null
+  then
+    echo "$SERVICE is already running!"
+  else
+    echo "Starting $SERVICE..."
+    as_user "cd $QKOU_PATH && nohup $PYTHON_PATH $SERVICE > $LOG &"
+    sleep 5 
+    if pgrep -u $USERNAME -f $SERVICE > /dev/null
+    then
+      echo "$SERVICE is now running."
+    else
+      echo "Error! Could not start $SERVICE!"
+    fi
+  fi
+}
+
+stream_stop() {
+  if pgrep -u $USERNAME -f $SERVICE > /dev/null
+  then
+    echo "Stopping $SERVICE"
+    as_user "pkill -u $USERNAME -f '$SERVICE'"
+  else
+    echo "$SERVICE was not running."
+  fi
+  if pgrep -u $USERNAME -f $SERVICE > /dev/null
+  then
+    echo "Error! $SERVICE could not be stopped."
+  else
+    echo "$SERVICE is stopped."
+  fi
+}
+
+#Start-Stop here
+case "$1" in
+  start)
+    stream_start
+    ;;
+  stop)
+    stream_stop
+    ;;
+  restart)
+    stream_stop
+    stream_start
+    ;;
+
+  *)
+  echo "Usage: $0 {start|stop|restart}"
+  exit 1
+  ;;
+esac
+ 
+exit 0
