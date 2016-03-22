@@ -120,11 +120,40 @@ $ crontab -e
 ```
 
 最後に、stream.pyを起動させて終わりです。
+ここではUbuntu 14.04 LTSの場合(init.dの場合)の起動スクリプトを例に出しています。
+その他のシステムでは別途記載するシェルスクリプトを作成し実行する、またはそのシステムに合った起動スクリプトを自作してください。
+
+```bash
+$ sudo apt-get install sysv-rc-conf
+$ cd /path/to/Qkou_kit
+$ vim q-stream
+# Settings
+QKOU_PATH='/home/kyukou/Qkou_kit'
+PYTHON_PATH='/usr/bin/python'
+USERNAME='kyukou'
+SERVICE='stream.py'
+LOG='/dev/null'
+
+$ sudo chmod a+x q-stream
+$ sudo cp q-stream /etc/init.d/
+$ sudo sysv-rc-conf q-stream on
+
+# Start service
+$ sudo service q-stream start
+# Stop service
+$ sudo service q-stream stop
+# Restart service
+$ sudo service q-stream restart
+```
+
+以下は超適当なスクリプトです。nohupを使ってバックグラウンドで使用すること、pkillでプロセスキルするあたりは上記の起動スクリプトと共通です。
 
 ```bash
 $ vim start.sh
-nohup /path/to/python stream.py
-$ sh start.sh
+nohup /path/to/python stream.py > /dev/null &
+
+$ vim stop.sh
+pkill -u [username] -f 'stream.py'
 ```
 
 ログは自動的にdebug.logまたはerror.logに書き込まれますが、stream.pyにおいては例外的にストリーム中にエラーが起こった場合、settings.pyに書いたidあてにダイレクトメッセージで通知が行われます。
