@@ -1,6 +1,9 @@
 conf/settings.conf
+.project
+.pydevproject
 *.log
 .DS_Store
 *.swp
 *.pyc
 *.un~
+
