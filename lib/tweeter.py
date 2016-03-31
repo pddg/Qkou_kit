@@ -54,3 +54,23 @@ def format_cancel(*args):
     elif len(tweet_text) > 140:
         return tweet_text[0:139]
 
+
+def format_news(*args):
+    # linkがない場合
+    if len(args[2]) is 0:
+        tweet_text = u"\n掲載日：%s\n詳細：%s" % (args[0], args[1])
+        link = u''
+        num = u" #news%s" % args[3]
+    # linkがある場合
+    else:
+        tweet_text = u"\n掲載日：%s\n詳細：%s" % (args[0], args[1])
+        link = u'\nリンク:%s' % args[2]
+        num = u" #news%s" % args[3]
+    # TwitterでのURLの文字数は22又は23
+    if 95 >= len(tweet_text) > 0:
+        tweet_text += link
+        tweet_text += num
+        return tweet_text
+    elif len(tweet_text) > 95:
+        formatted_text = tweet_text[0:100] + link + num
+        return formatted_text
