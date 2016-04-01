@@ -21,8 +21,6 @@ def add_info(html, q):
                 for a in td[8].findAll('a'):
                     link = a.get('href')
                     links.append(link)
-            else:
-                link = u''
             # タグ除去
             lec_info = map(text, td[3:11])
             # リンクを追加
@@ -67,11 +65,15 @@ def add_news(html, q):
             td = tr.findAll('td')
             news = map(text, td[0:2])
             # 文中にlinkが存在するか確認
+            links = []
             if td[1].a is not None:
-                link = td[1].a.get('href')
-            else:
-                link = u''
-            news.append(link)
+                for a in td[1].findAll('a'):
+                    link = a.get('href')
+                    links.append(link)
+            urls = " ".join(links)
+            # URLを付加
+            news.append(urls)
+            # DBに投げる
             news_id = db_news.add_news(*news)
             if news_id is not False:
                 news.append(news_id)
