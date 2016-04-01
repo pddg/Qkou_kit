@@ -15,8 +15,18 @@ def add_info(html, q):
     try:
         for tr in html.findAll('tr', attrs={'class': re.compile('^gen_')}):
             td = tr.findAll('td')
+            # リンクの有無判定
+            links = []
+            if td[8].a is not None:
+                for a in td[8].findAll('a'):
+                    link = a.get('href')
+                    links.append(link)
+            else:
+                link = u''
             # タグ除去
             lec_info = map(text, td[3:11])
+            # リンクを追加
+            lec_info[5] = lec_info[5] + " " + " ".join(links)
             # データベースに投げる
             info_id = db_info.add_info(*lec_info)
             if info_id is not False:

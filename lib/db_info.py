@@ -49,8 +49,8 @@ class Qkou(Base):
 
     def __repr__(self):
         return "<Qkou('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s, %s')>"\
-                 % (self.subject, self.teacher, self.week, self.period,
-                    self.abstract, self.detail, self.first, self.update, self.active)
+            % (self.subject, self.teacher, self.week, self.period,
+               self.abstract, self.detail, self.first, self.update, self.active)
 
 
 Base.metadata.create_all(engine)
@@ -70,7 +70,8 @@ def add_info(subject, teacher, week, period, abstract, detail, first, update):
     first = first.encode('utf-8')
     update = update.encode('utf-8')
     active = 1
-    newinfo = Qkou(subject, teacher, week, period, abstract, detail, first, update, active)
+    newinfo = Qkou(
+        subject, teacher, week, period, abstract, detail, first, update, active)
     try:
         # 既存かどうかの確認
         qkou.filter(and_(Qkou.subject == subject, Qkou.week == week,
@@ -82,7 +83,7 @@ def add_info(subject, teacher, week, period, abstract, detail, first, update):
             # 既存の場合
             log.debug('授業名: %s … [既存]', subject)
             ex_info = qkou.filter(and_(Qkou.subject == subject, Qkou.week == week,
-                                   Qkou.first == first, Qkou.update == update)).first()
+                                       Qkou.first == first, Qkou.update == update)).first()
             ex_info.active = active
             session.commit()
             session.close()
@@ -146,9 +147,8 @@ def id_info(id):
         if lecture_info is not None:
             return lecture_info
         else:
-            return 0 
+            return 0
     except Exception as e:
         session.close()
         log.exception(e)
         return False
-
