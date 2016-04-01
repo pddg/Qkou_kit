@@ -1,6 +1,7 @@
 conf/settings.conf
 .project
 .pydevproject
+.settings
 *.log
 .DS_Store
 *.swp
