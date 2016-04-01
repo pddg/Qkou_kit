@@ -32,7 +32,7 @@ stream_start() {
     echo "$SERVICE is already running!"
   else
     echo "Starting $SERVICE..."
-    as_user "cd $QKOU_PATH && nohup $PYTHON_PATH $SERVICE > $LOG &"
+    as_user "cd $QKOU_PATH && nohup $PYTHON_PATH $SERVICE > $LOG &" 
     sleep 5 
     if pgrep -u $USERNAME -f $SERVICE > /dev/null
     then
@@ -47,7 +47,7 @@ stream_stop() {
   if pgrep -u $USERNAME -f $SERVICE > /dev/null
   then
     echo "Stopping $SERVICE"
-    as_user "pkill -u $USERNAME -f '$SERVICE'"
+    as_user "pkill -u $USERNAME -f '$SERVICE'" > /dev/null
   else
     echo "$SERVICE was not running."
   fi
