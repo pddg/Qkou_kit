@@ -78,8 +78,8 @@ if __name__ == "__main__":
 
     group.add_argument("-d",
                        "--db_name",
-                       dest="DB_name",
-                       default=1,
+                       dest="db_name",
+                       default='info',
                        type=str,
                        nargs="?",
                        choices=['info', 'cancel', 'news'],
@@ -87,15 +87,15 @@ if __name__ == "__main__":
                        )
 
     ids = parser.parse_args().info_id
-    name = parser.parse_args().DB_name
+    name = parser.parse_args().db_name
     nodata = u"お問い合わせされた情報は現在存在しません。"
 
     if len(ids) > 0:
         # -i,-dが設定されている時
         for id in ids:
-            if name is 'info':
+            if name == 'info':
                 info = id_info(id)
-            elif name is 'cancel':
+            elif name == 'cancel':
                 info = id_cancel(id)
             else:
                 info = id_news(id)
