@@ -13,6 +13,8 @@ log = logging.getLogger('getlog')
 
 def add_info(html, q):
     try:
+        # 更新した数をカウント
+        updated = 0
         for tr in html.findAll('tr', attrs={'class': re.compile('^gen_')}):
             td = tr.findAll('td')
             # リンクの有無判定
@@ -33,14 +35,19 @@ def add_info(html, q):
                 t = format_info(*lec_info)
                 # キューに投入
                 q.put(t)
+                updated += 1
             else:
                 pass
+        else:
+            print (u"[GetInfoThread] %s個の情報を追加、または更新しました。") % (updated)
     except Exception as e:
         log.exception(e)
 
 
 def add_cancel(html, q):
     try:
+        # 更新した数をカウント
+        updated = 0
         for tr in html.findAll('tr', attrs={'class': re.compile('^gen_')}):
             td = tr.findAll('td')
             # タグ除去
@@ -52,8 +59,11 @@ def add_cancel(html, q):
                 t = format_cancel(*lec_cancel)
                 # キューに投入
                 q.put(t)
+                updated += 1
             else:
                 pass
+        else:
+            print (u"[GetCancelThread] %s個の情報を追加しました。") % (updated)
     except Exception as e:
         log.exception(e)
 
@@ -81,8 +91,11 @@ def add_news(html, q):
                 t = format_news(*news)
                 # キューに投入
                 q.put(t)
+                updated += 1
             else:
                 pass
+        else:
+            print (u"[GetNewsThread] %s個の情報を追加しました。") % (updated)
     except Exception as e:
         log.exception(e)
 

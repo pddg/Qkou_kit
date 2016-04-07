@@ -31,12 +31,11 @@ class Cancel(Base):
     day = Column(VARCHAR(length=15))
     week = Column(VARCHAR(length=15))
     period = Column(VARCHAR(length=5))
-    abstract = Column(VARCHAR(length=40))
+    abstract = Column(VARCHAR(length=200))
     first = Column(VARCHAR(length=10))
-    update = Column(VARCHAR(length=10))
     active = Column(Integer)
 
-    def __init__(self, subject, teacher, day, week, period, abstract, first, update, active):
+    def __init__(self, subject, teacher, day, week, period, abstract, first, active):
         self.subject = subject
         self.teacher = teacher
         self.day = day
@@ -44,20 +43,19 @@ class Cancel(Base):
         self.period = period
         self.abstract = abstract
         self.first = first
-        self.update = update
         self.active = active
 
     def __repr__(self):
         return "<Qkou('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s, '%s')>"\
-                 % (self.subject, self.teacher, self.day, self.week,
-                    self.period, self.abstract, self.first, self.update, self.active)
+            % (self.subject, self.teacher, self.day, self.week,
+               self.period, self.abstract, self.first, self.active)
 
 
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
 
-def add_cancel(subject, teacher, day, week, period, abstract, first, update):
+def add_cancel(subject, teacher, day, week, period, abstract, first):
     session = Session()
     qkou = session.query(Cancel)
     # utf-8にエンコードしないとエラー
@@ -68,16 +66,17 @@ def add_cancel(subject, teacher, day, week, period, abstract, first, update):
     period = period.encode('utf-8')
     abstract = abstract.encode('utf-8')
     first = first.encode('utf-8')
-    update = update.encode('utf-8')
     active = 1
-    newcancel = Cancel(subject, teacher, day, week, period, abstract, first, update, active)
+    newcancel = Cancel(
+        subject, teacher, day, week, period, abstract, first, active)
     try:
         # 既存かどうかの確認
-        qkou.filter(and_(Cancel.subject == subject, Cancel.day == day, Cancel.update == update)).one()
+        qkou.filter(
+            and_(Cancel.subject == subject, Cancel.day == day, Cancel.abstract == abstract)).one()
         # 更新があった場合の確認
-        ex_cancel = qkou.filter(and_(Cancel.subject == subject, Cancel.day == day,
-                                     Cancel.first == first, Cancel.update != update)).first()
-        if ex_cancel is None:
+        ex_cancel = qkou.filter(and_(
+            Cancel.subject == subject, Cancel.day == day, Cancel.abstract == abstract)).first()
+        if ex_cancel is not None:
             # 既存の場合
             log.debug('授業名: %s … [既存]', subject)
             ex_cancel.active = active
@@ -86,15 +85,9 @@ def add_cancel(subject, teacher, day, week, period, abstract, first, update):
             return False
         else:
             # 更新の場合
-            log.debug('授業名: %s … [更新]', subject)
-            ex_cancel.abstract = abstract
-            ex_cancel.update = update
-            ex_cancel.active = active
-            session.commit()
-            # sessionを閉じる前にidを取得
-            ex_id = ex_cancel.id
+            log.warning('News: %s … [想定外のエラー]', subject)
             session.close()
-            return ex_id
+            return False
     except NoResultFound:
         # 新規の場合
         log.debug('授業名: %s … [新規]', subject)
@@ -133,6 +126,22 @@ def del_deactive_cancel():
         log.exception(e)
 
 
+def id_cancel(id):
+    session = Session()
+    qkou = session.query(Cancel)
+    try:
+        cancel_info = qkou.filter(News.id == id).first()
+        session.close()
+        if cancel_info is not None:
+            return cancel_info
+        else:
+            return 0
+    except Exception as e:
+        session.close()
+        log.exception(e)
+        return False
+
+
 # 日付から検索してデータを取得し教科名を返す
 def todayinfo(day):
     infolist = []
@@ -140,4 +149,3 @@ def todayinfo(day):
     for info in session.query(Cancel).filter(Cancel.day == day).all():
         infolist.append(info.sub)
     return infolist
-

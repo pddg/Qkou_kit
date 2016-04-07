@@ -73,6 +73,7 @@ def add_news(update, detail, link):
             # 更新の場合
             log.warning('News: %s %s … [想定外のエラー]', update, detail[0:10])
             session.close()
+            return False
     except NoResultFound:
         # 新規の場合
         log.debug('News: %s %s … [新規]', update, detail[0:10])

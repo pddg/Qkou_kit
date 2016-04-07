@@ -26,9 +26,13 @@ def get_api():
     return api
 
 
-def tweet(t):
+def tweet(t, bool):
     try:
-        api.update_status(status=t)
+        # コマンドライン引数で変化
+        if bool:
+            print t
+        else:
+            api.update_status(status=t)
     except Exception as e:
         log.exception(e)
 
