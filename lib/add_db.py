@@ -39,7 +39,10 @@ def add_info(html, q):
             else:
                 pass
         else:
-            print (u"[GetInfoThread] %s個の情報を追加、または更新しました。") % (updated)
+            if updated is not 0:
+                print (u"[GetInfoThread] %s個の情報を追加しました。") % (updated)
+            else:
+                print (u"[GetInfoThread] 追加情報はありませんでした。")
     except Exception as e:
         log.exception(e)
 
@@ -63,7 +66,10 @@ def add_cancel(html, q):
             else:
                 pass
         else:
-            print (u"[GetCancelThread] %s個の情報を追加しました。") % (updated)
+            if updated is not 0:
+                print (u"[GetCancelThread] %s個の情報を追加しました。") % (updated)
+            else:
+                print (u"[GetCancelThread] 追加情報はありませんでした。")
     except Exception as e:
         log.exception(e)
 
@@ -95,7 +101,10 @@ def add_news(html, q):
             else:
                 pass
         else:
-            print (u"[GetNewsThread] %s個の情報を追加しました。") % (updated)
+            if updated is not 0:
+                print (u"[GetNewsThread] %s個の情報を追加しました。") % (updated)
+            else:
+                print (u"[GetNewsThread] 追加情報はありませんでした。")
     except Exception as e:
         log.exception(e)
 

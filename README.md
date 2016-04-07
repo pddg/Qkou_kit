@@ -69,28 +69,42 @@ AS = # Access Secret
 id = # 通知用に使用するTwitter ID
 ```
 
-最初に試運転を行う(テーブル及びカラムの作成)が、このとき\_\_main\_\_.pyの一部を**修正する必要があります。**
-
-```bash
-$ vim __main__.py
-```
-
-```python
-# 14行目付近
-# 初回実行時は以下の2文をコメントアウトする必要がある
-# deactive_info()
-# deactive_cancel()
-# deactive_news()
-```
+-h又は--helpオプションを付けることでヘルプメッセージが表示されます。
 
 ```bash
 $ cd /path/to/Qkou_kit
-$ python ../Qkou_kit
+$ python ../Qkou_kit -h
+usage: Qkou_kit [-h] [-n] [-c] [-i [INFO_ID [INFO_ID ...]]]
+                [-d [{info,cancel,news}]]
+
+Automatically collect the lecture information of Kyoto Institute of Technology
+and tweet update.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -n, --no-tweet        Only update database and show result of that on CLI.
+                        In this option, Qkou_kit don't tweet any.
+  -c, --create-table    Creating table. You should use this option, if your
+                        MySQL server doesn't have the table.
+
+Show information:
+  This option is showing the information of lecture and news.
+
+  -i [INFO_ID [INFO_ID ...]], --id [INFO_ID [INFO_ID ...]]
+                        To show information of some lectures, input their ids.
+  -d [{info,cancel,news}], --db_name [{info,cancel,news}]
+                        Choose the database to use.
+```
+
+最初に必ず-cまたは--create-tableオプションを付けて試運転を行ってください(テーブル及びカラムの作成が行われます)。
+
+```bash
+$ cd /path/to/Qkou_kit 
+$ python ../Qkou_kit -c
 $ cat log/debug.log
 2016-03-31 22:47:28,554 - run - DEBUG - [ Start GetInfoThread ]
 2016-03-31 22:47:28,554 - run - DEBUG - [ Start GetCancelThread ]
 2016-03-31 22:47:28,554 - run - DEBUG - [ Start GetNewsThread ]
-2016-03-31 22:47:28,555 - run - DEBUG - [ Start TweetThread ]
 2016-03-31 22:47:28,562 - soupinfo - DEBUG - ログイン開始
 2016-03-31 22:47:28,562 - soupinfo - DEBUG - ログイン開始
 2016-03-31 22:47:28,563 - soupinfo - DEBUG - ログイン開始
@@ -105,8 +119,6 @@ $ cat log/debug.log
 2016-03-31 22:47:33,636 - add_news - DEBUG - News: 2016.3.30 平成28� … [既存]
 2016-03-31 22:47:33,644 - add_info - DEBUG - 授業名: 物理化学Ⅰma … [既存]
 2016-03-31 22:47:33,676 - add_news - DEBUG - News: 2016.3.30 [重要] � … [既存]
-2016-03-31 22:47:33,678 - add_info - WARNING - 授業名: 化学基礎実験me … [重複]
-2016-03-31 22:47:33,687 - add_info - WARNING - 授業名: 生物学基礎実験Ａ … [重複]
 2016-03-31 22:47:33,701 - add_info - DEBUG - 授業名: 数学演習Ⅱpb … [既存]
 2016-03-31 22:47:33,707 - add_news - DEBUG - News: 2016.3.30 平成27� … [既存]
 2016-03-31 22:47:33,735 - add_info - DEBUG - 授業名: 基礎解析Ⅱpb … [既存]
@@ -154,11 +166,10 @@ $ cat log/debug.log
 2016-03-31 22:47:34,518 - add_news - DEBUG - News: 2015.10.15 平成28� … [既存]
 2016-03-31 22:47:34,542 - add_news - DEBUG - News: 2015.4.13 学生定� … [既存]
 2016-03-31 22:47:34,556 - run - DEBUG - [ End GetNewsThread ]
-2016-03-31 22:47:34,583 - run - DEBUG - [ End TweetThread ]
 ```
 
 うまくいけばdebug.logに以上のような感じで出力され、error.logにはなにも出力されていないと思います。
-一度実行して成功すれば、**コメントアウトは元に戻してください。**
+一度実行して成功すれば、後はオプション指定なしで実行すればツイートを行うようになります。
 
 また、実行時にconfigparserがセクションエラーを吐いた時は、設定ファイルのミス、または実行時のカレントディレクトリがQkou_kit(git cloneしたディレクトリ)になっているか確認してください。
 
@@ -211,7 +222,6 @@ pkill -u [username] -f 'stream.py'
 
 ##今後の課題
 
-* 初期セットアップ時の設定が面倒
 * ストリームがたまに落ちて復帰してこない時がある
 * 実行が遅い(もう限界？)
 * 連続してツイートする際の遅延をもうちょっとインテリジェンスに
