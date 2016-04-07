@@ -72,10 +72,10 @@ def add_cancel(subject, teacher, day, week, period, abstract, first):
     try:
         # 既存かどうかの確認
         qkou.filter(
-            and_(Cancel.subject == subject, Cancel.day == day, Cancel.abstract == abstract)).one()
+            and_(Cancel.subject == subject, Cancel.day == day, Cancel.first == first)).one()
         # 更新があった場合の確認
         ex_cancel = qkou.filter(and_(
-            Cancel.subject == subject, Cancel.day == day, Cancel.abstract == abstract)).first()
+            Cancel.subject == subject, Cancel.day == day, Cancel.first == first)).first()
         if ex_cancel is not None:
             # 既存の場合
             log.debug('授業名: %s … [既存]', subject)
