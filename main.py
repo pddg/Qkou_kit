@@ -34,7 +34,7 @@ class TweetThread(Thread):
         i = 1
         a = float(1.5)
         # GetInfoThreadとGetCancelThread, GetNewsThreadが終了するまで待機
-        while active_count() >= 4:
+        while active_count() >= 3:
             time.sleep(1)
         else:
             while True:
