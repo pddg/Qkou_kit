@@ -76,6 +76,8 @@ def add_cancel(html, q):
 
 def add_news(html, q):
     try:
+        # 更新した数をカウント
+        updated = 0
         now_notice = html.find('div', attrs={'id': 'now_notice_area'})
         for tr in now_notice.findAll('tr'):
             td = tr.findAll('td')
