@@ -107,8 +107,11 @@ def del_deactive_news():
     qkou = session.query(News)
     try:
         qkou.filter(News.active == 0).delete()
+        session.commit()
+        session.close()
         log.debug('古いデータを削除')
     except Exception as e:
+        session.close()
         log.exception(e)
 
 

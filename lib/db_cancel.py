@@ -121,8 +121,11 @@ def del_deactive_cancel():
     qkou = session.query(Cancel)
     try:
         qkou.filter(Cancel.active == 0).delete()
+        session.commit()
+        session.close()
         log.debug('古いデータを削除')
     except Exception as e:
+        session.close()
         log.exception(e)
 
 

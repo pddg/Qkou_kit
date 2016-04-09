@@ -133,8 +133,11 @@ def del_deactive_info():
     qkou = session.query(Qkou)
     try:
         qkou.filter(Qkou.active == 0).delete()
+        session.commit()
+        session.close()
         log.debug('古いデータを削除')
     except Exception as e:
+        session.close()
         log.exception(e)
 
 
