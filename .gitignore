@@ -7,4 +7,6 @@ conf/settings.conf
 *.swp
 *.pyc
 *.un~
-
+*.1
+*.2
+*.3
