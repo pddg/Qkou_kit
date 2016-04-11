@@ -59,9 +59,9 @@ def add_news(update, detail, link):
     newinfo = News(update, detail, link, active)
     try:
         # 既存かどうかの確認
-        qkou.filter(and_(News.update == update, News.detail == detail)).one()
+        qkou.filter(and_(News.up_date == update, News.detail == detail)).one()
         ex_info = qkou.filter(
-            and_(News.update == update, News.detail == detail)).first()
+            and_(News.update == up_date, News.detail == detail)).first()
         if ex_info is not None:
             # 既存の場合
             log.debug('News: %s %s … [既存]', update, detail[0:10])

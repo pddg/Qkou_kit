@@ -75,15 +75,15 @@ def add_info(subject, teacher, week, period, abstract, detail, first, update):
     try:
         # 既存かどうかの確認
         qkou.filter(and_(Qkou.subject == subject, Qkou.week == week,
-                         Qkou.first == first, Qkou.update == update)).one()
+                         Qkou.first == first, Qkou.up_date == update)).one()
         # 更新があった場合の確認
         ex_info = qkou.filter(and_(Qkou.subject == subject, Qkou.week == week,
-                                   Qkou.first == first, Qkou.update != update)).first()
+                                   Qkou.first == first, Qkou.up_date != update)).first()
         if ex_info is None:
             # 既存の場合
             log.debug('授業名: %s … [既存]', subject)
             ex_info = qkou.filter(and_(Qkou.subject == subject, Qkou.week == week,
-                                       Qkou.first == first, Qkou.update == update)).first()
+                                       Qkou.first == first, Qkou.up_date == update)).first()
             ex_info.active = active
             session.commit()
             session.close()
@@ -93,7 +93,7 @@ def add_info(subject, teacher, week, period, abstract, detail, first, update):
             log.debug('授業名: %s … [更新]', subject)
             ex_info.abstract = abstract
             ex_info.detail = detail
-            ex_info.update = update
+            ex_info.up_date = update
             ex_info.active = active
             session.commit()
             # sessionを閉じる前にidを取得
