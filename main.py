@@ -44,7 +44,7 @@ class TweetThread(Thread):
                     # キューが空になったら終了
                     log.debug('[ End TweetThread ]\n')
                     break
-                if bool:
+                if bool is True:
                     pass
                 else:
                     i += 1

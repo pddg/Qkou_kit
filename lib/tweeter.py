@@ -29,7 +29,7 @@ def get_api():
 def tweet(t, bool):
     try:
         # コマンドライン引数で変化
-        if bool:
+        if bool is True:
             print t
         else:
             api.update_status(status=t)
