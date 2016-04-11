@@ -32,15 +32,15 @@ class News(Base):
     link = Column(VARCHAR(length=200))
     active = Column(Integer, nullable=False)
 
-    def __init__(self, update, detail, link, active):
-        self.update = update
+    def __init__(self, up_date, detail, link, active):
+        self.up_date = up_date
         self.detail = detail
         self.link = link
         self.active = active
 
     def __repr__(self):
         return "<News('%s', '%s', '%s', '%s')>"\
-            % (self.update, self.detail, self.link, self.active)
+            % (self.up_date, self.detail, self.link, self.active)
 
 
 Base.metadata.create_all(engine)
@@ -61,7 +61,7 @@ def add_news(update, detail, link):
         # 既存かどうかの確認
         qkou.filter(and_(News.up_date == update, News.detail == detail)).one()
         ex_info = qkou.filter(
-            and_(News.update == up_date, News.detail == detail)).first()
+            and_(News.up_date == update, News.detail == detail)).first()
         if ex_info is not None:
             # 既存の場合
             log.debug('News: %s %s … [既存]', update, detail[0:10])

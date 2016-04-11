@@ -23,11 +23,10 @@ config.read('./conf/settings.conf')
 
 class TweetThread(Thread):
 
-    def __init__(self, queue, bool):
+    def __init__(self, queue):
         super(TweetThread, self).__init__()
         self.daemon = True
         self.queue = queue
-        self.bool = bool
 
     def run(self):
         log.debug('[ Start TweetThread ]')
@@ -44,14 +43,34 @@ class TweetThread(Thread):
                     # キューが空になったら終了
                     log.debug('[ End TweetThread ]\n')
                     break
-                if bool is True:
-                    pass
-                else:
-                    i += 1
-                    # 1.5^(ループ数)秒待機
-                    w = pow(a, i)
-                    time.sleep(w)
-                lib.tweeter.tweet(t, bool)
+                i += 1
+                # 1.5^(ループ数)秒待機
+                w = pow(a, i)
+                time.sleep(w)
+                lib.tweeter.tweet(t)
+
+
+class PrintThread(Thread):
+
+    def __init__(self, queue):
+        super(PrintThread, self).__init__()
+        self.daemon = True
+        self.queue = queue
+
+    def run(self):
+        log.debug('[ Start PrintThread ]')
+        # GetInfoThreadとGetCancelThread, GetNewsThreadが終了するまで待機
+        while active_count() >= 3:
+            time.sleep(1)
+        else:
+            while True:
+                try:
+                    t = self.queue.get(block=False, timeout=None)
+                except Exception:
+                    # キューが空になったら終了
+                    log.debug('[ End PrintThread ]\n')
+                    break
+                print t
 
 
 class GetInfoThread(Thread):

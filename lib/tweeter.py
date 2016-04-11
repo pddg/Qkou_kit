@@ -26,13 +26,9 @@ def get_api():
     return api
 
 
-def tweet(t, bool):
+def tweet(t):
     try:
-        # コマンドライン引数で変化
-        if bool is True:
-            print t
-        else:
-            api.update_status(status=t)
+        api.update_status(status=t)
     except Exception as e:
         log.exception(e)
 
@@ -40,7 +36,6 @@ def tweet(t, bool):
 def format_info(*args):
     tweet_text = u"\n授業名：%s\n教員名：%s\n日程：%s, %s限\n概要：%s\n詳細：%s" \
                  % (args[0], args[1], args[2], args[3], args[4], args[5])
-    print args
     num = u" #lec%s" % args[8]
     if 131 >= len(tweet_text) > 0:
         tweet_text += num

@@ -36,7 +36,7 @@ class Qkou(Base):
     up_date = Column(VARCHAR(length=10))
     active = Column(Integer, nullable=False)
 
-    def __init__(self, subject, teacher, week, period, abstract, detail, first, update, active):
+    def __init__(self, subject, teacher, week, period, abstract, detail, first, up_date, active):
         self.subject = subject
         self.teacher = teacher
         self.week = week
@@ -44,13 +44,13 @@ class Qkou(Base):
         self.abstract = abstract
         self.detail = detail
         self.first = first
-        self.update = update
+        self.up_date = up_date
         self.active = active
 
     def __repr__(self):
         return "<Qkou('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s, %s')>"\
             % (self.subject, self.teacher, self.week, self.period,
-               self.abstract, self.detail, self.first, self.update, self.active)
+               self.abstract, self.detail, self.first, self.up_date, self.active)
 
 
 Base.metadata.create_all(engine)

@@ -8,11 +8,11 @@ from lib.db_news import deactive_news, id_news
 import argparse
 
 
-def default_do(q, bool):
+def default_do(q):
     GIThread = main.GetInfoThread(q)
     GCThread = main.GetCancelThread(q)
     NwThread = main.GetNewsThread(q)
-    TwThread = main.TweetThread(q, bool)
+    TwThread = main.TweetThread(q)
 
     # 初回実行時は以下の2文をコメントアウトする必要がある (要改善)
     deactive_info()
@@ -29,6 +29,29 @@ def default_do(q, bool):
     GCThread.join()
     NwThread.join()
     TwThread.join()
+
+
+def print_do(q):
+    GIThread = main.GetInfoThread(q)
+    GCThread = main.GetCancelThread(q)
+    NwThread = main.GetNewsThread(q)
+    PrThread = main.PrintThread(q)
+
+    # 初回実行時は以下の2文をコメントアウトする必要がある (要改善)
+    deactive_info()
+    deactive_cancel()
+    deactive_news()
+
+    # 各スレッド開始
+    GIThread.start()
+    GCThread.start()
+    NwThread.start()
+    PrThread.start()
+    # 全てのスレッドが終了するまで待機
+    GIThread.join()
+    GCThread.join()
+    NwThread.join()
+    PrThread.join()
 
 
 def operate_DB(q):
@@ -109,9 +132,11 @@ if __name__ == "__main__":
     else:
         pass
 
-    if parser.parse_args().create:
+    if parser.parse_args().create is True:
         # -cが指定されている時(True)、テーブル作成のみ
         operate_DB(q)
-    else:
+    elif parser.parse_args().notweet is True:
+        print_do(q)
         # DBの更新及び更新結果をツイート(False)orコマンドラインに表示(True)
-        default_do(q, parser.parse_args().notweet)
+    else:
+        default_do(q)
