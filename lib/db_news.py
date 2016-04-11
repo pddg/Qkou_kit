@@ -27,7 +27,7 @@ class News(Base):
     __tablename__ = 'news'
 
     id = Column(Integer, primary_key=True)
-    update = Column(VARCHAR(length=10))
+    up_date = Column(VARCHAR(length=10))
     detail = Column(VARCHAR(length=1000))
     link = Column(VARCHAR(length=200))
     active = Column(Integer, nullable=False)

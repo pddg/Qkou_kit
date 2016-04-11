@@ -33,7 +33,7 @@ class Qkou(Base):
     abstract = Column(VARCHAR(length=40))
     detail = Column(VARCHAR(length=10000))
     first = Column(VARCHAR(length=10))
-    update = Column(VARCHAR(length=10))
+    up_date = Column(VARCHAR(length=10))
     active = Column(Integer, nullable=False)
 
     def __init__(self, subject, teacher, week, period, abstract, detail, first, update, active):
