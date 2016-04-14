@@ -77,7 +77,7 @@ def add_info(subject, teacher, week, period, abstract, detail, first, update):
         qkou.filter(and_(Qkou.subject == subject, Qkou.week == week, Qkou.detail == detail,
                          Qkou.first == first, Qkou.up_date == update)).one()
         # 更新があった場合の確認
-        ex_info = qkou.filter(and_(Qkou.subject == subject, Qkou.week == week,
+        ex_info = qkou.filter(and_(Qkou.subject == subject, Qkou.week == week, Qkou.abstract == abstract,
                                    Qkou.first == first, Qkou.up_date != update)).first()
         if ex_info is None:
             # 既存の場合
