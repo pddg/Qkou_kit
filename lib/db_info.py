@@ -82,7 +82,7 @@ def add_info(subject, teacher, week, period, abstract, detail, first, update):
         if ex_info is None:
             # 既存の場合
             log.debug('授業名: %s … [既存]', subject)
-            ex_info = qkou.filter(and_(Qkou.subject == subject, Qkou.week == week,
+            ex_info = qkou.filter(and_(Qkou.subject == subject, Qkou.week == week, Qkou.detail == detail,
                                        Qkou.first == first, Qkou.up_date == update)).first()
             ex_info.active = active
             session.commit()
