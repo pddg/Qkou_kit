@@ -14,7 +14,6 @@ def default_do(q):
     NwThread = main.GetNewsThread(q)
     TwThread = main.TweetThread(q)
 
-    # 初回実行時は以下の2文をコメントアウトする必要がある (要改善)
     deactive_info()
     deactive_cancel()
     deactive_news()
@@ -37,7 +36,6 @@ def print_do(q):
     NwThread = main.GetNewsThread(q)
     PrThread = main.PrintThread(q)
 
-    # 初回実行時は以下の2文をコメントアウトする必要がある (要改善)
     deactive_info()
     deactive_cancel()
     deactive_news()
@@ -133,10 +131,11 @@ if __name__ == "__main__":
         pass
 
     if parser.parse_args().create is True:
-        # -cが指定されている時(True)、テーブル作成のみ
+        # -cが指定されている時。テーブル作成のみ
         operate_DB(q)
     elif parser.parse_args().notweet is True:
+        # -nが指定されている時。更新はするがツイートはしない。
         print_do(q)
-        # DBの更新及び更新結果をツイート(False)orコマンドラインに表示(True)
     else:
+        # デフォルト
         default_do(q)
