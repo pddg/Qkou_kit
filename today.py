@@ -13,7 +13,7 @@ log = logging.getLogger('getlog')
 
 def del_yesterday_info():
     # 昨日の日付を取得
-    d = datetime.now() + timedelta(days = -1)
+    d = datetime.now() + timedelta(days=-1)
     yesterday = "%s/%s/%s" % (d.year, d.month, d.day)
 
     api = get_api()
@@ -49,10 +49,10 @@ def get_today_info():
 
     # Tweet
     if len(today) is 0:
-        tweet(u"%s 本日休講はありません" % (date))
+        tweet("%s 本日休講はありません" % (date))
     else:
         i = ", ".join(today)
-        t = u"%s 本日の休講\n%s" % (date, i)
+        t = "%s 本日の休講\n%s" % (date, i)
         if len(t) < 140:
             tweet(t)
         else:
