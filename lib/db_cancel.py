@@ -150,5 +150,6 @@ def todayinfo(day):
     infolist = []
     session = Session()
     for info in session.query(Cancel).filter(Cancel.day == day).all():
-        infolist.append(info.sub)
+        infolist.append(info.subject)
+    session.close()
     return infolist
