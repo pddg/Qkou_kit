@@ -42,7 +42,7 @@ def del_yesterday_info():
 def get_today_info():
     # 今日の日付を取得
     d = datetime.now()
-    date = u"%s/%s/%s" % (d.year, d.month, d.day)
+    date = "%s/%s/%s" % (d.year, d.month, d.day)
 
     # 取得した日付を元にDBから情報を取得
     today = todayinfo(date)
