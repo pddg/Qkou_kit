@@ -76,7 +76,7 @@ def get_news(id):
     if news is not False:
         if news is not 0:
             try:
-                update = news.update.decode('utf-8')
+                update = news.up_date.decode('utf-8')
                 detail = news.detail.decode('utf-8')
                 if len(news.link) is not 0:
                     link = news.link.decode('utf-8')
