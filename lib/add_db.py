@@ -1,36 +1,22 @@
 # coding: utf-8
-import re
 import db_info
 import db_cancel
 import db_news
+import hashlib
 from tweeter import format_info, format_cancel, format_news
-import logging
-import logging.config
+import settings
 
-logging.config.fileConfig('./log/log.conf')
-log = logging.getLogger('getlog')
+log = settings.log
 
 
-def add_info(html, q):
+def add_info_to_queue(q, *args):
     try:
         # 更新した数をカウント
         updated = 0
-        for tr in html.findAll('tr', attrs={'class': re.compile('^gen_')}):
-            td = tr.findAll('td')
-            # リンクの有無判定
-            links = []
-            if td[8].a is not None:
-                for a in td[8].findAll('a'):
-                    link = a.get('href')
-                    links.append(link)
-            # タグ除去
-            lec_info = map(text, td[3:11])
-            # リンクを追加
-            lec_info[5] = lec_info[5] + " " + " ".join(links)
-            # データベースに投げる
-            info_id = db_info.add_info(*lec_info)
-            if info_id is not False:
-                lec_info.append(info_id)
+        for lec_info in args:
+            id = db_info.add_info(*lec_info)
+            if id is not False:
+                lec_info.append(id)
                 # Tweetする用に文章をフォーマット
                 t = format_info(*lec_info)
                 # キューに投入
@@ -39,25 +25,20 @@ def add_info(html, q):
             else:
                 pass
         else:
-            if updated is not 0:
-                print ("[GetInfoThread] %s個の情報を追加しました。") % (updated)
-            else:
-                print ("[GetInfoThread] 追加情報はありませんでした。")
+            # 更新した数を返す
+            return updated
     except Exception as e:
         log.exception(e)
 
 
-def add_cancel(html, q):
+def add_cancel_to_queue(q, *args):
     try:
         # 更新した数をカウント
         updated = 0
-        for tr in html.findAll('tr', attrs={'class': re.compile('^gen_')}):
-            td = tr.findAll('td')
-            # タグ除去
-            lec_cancel = map(text, td[2:9])
-            # データベースに投げる
+        for lec_cancel in args:
             cancel_id = db_cancel.add_cancel(*lec_cancel)
             if cancel_id is not False:
+                lec_cancel.append(cancel_id)
                 # Tweetする用に文章をフォーマット
                 t = format_cancel(*lec_cancel)
                 # キューに投入
@@ -66,32 +47,17 @@ def add_cancel(html, q):
             else:
                 pass
         else:
-            if updated is not 0:
-                print ("[GetCancelThread] %s個の情報を追加しました。") % (updated)
-            else:
-                print ("[GetCancelThread] 追加情報はありませんでした。")
+            # 更新数を返す
+            return updated
     except Exception as e:
         log.exception(e)
 
 
-def add_news(html, q):
+def add_news_to_queue(q, *args):
     try:
         # 更新した数をカウント
         updated = 0
-        now_notice = html.find('div', attrs={'id': 'now_notice_area'})
-        for tr in now_notice.findAll('tr'):
-            td = tr.findAll('td')
-            news = map(text, td[0:2])
-            # 文中にlinkが存在するか確認
-            links = []
-            if td[1].a is not None:
-                for a in td[1].findAll('a'):
-                    link = a.get('href')
-                    links.append(link)
-            urls = " ".join(links)
-            # URLを付加
-            news.append(urls)
-            # DBに投げる
+        for news in args:
             news_id = db_news.add_news(*news)
             if news_id is not False:
                 news.append(news_id)
@@ -103,13 +69,7 @@ def add_news(html, q):
             else:
                 pass
         else:
-            if updated is not 0:
-                print ("[GetNewsThread] %s個の情報を追加しました。") % (updated)
-            else:
-                print ("[GetNewsThread] 追加情報はありませんでした。")
+            # 更新数を返す
+            return updated
     except Exception as e:
         log.exception(e)
-
-
-def text(td):
-    return td.text.strip()

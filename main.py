@@ -1,24 +1,17 @@
 # coding:utf-8
-from lib.add_db import add_info, add_cancel, add_news
+import lib.add_db
 from lib.login import soupinfo
-from lib.db_info import del_deactive_info
-from lib.db_cancel import del_deactive_cancel
-from lib.db_news import del_deactive_news
+from lib.db_info import del_old_info
+from lib.db_cancel import del_old_cancel
+from lib.db_news import del_old_news
+from lib.collect import collect_info, collect_cancel, collect_news
 import lib.tweeter
-import ConfigParser
-import logging.config
-import logging
 import time
 from math import pow
 from threading import Thread, active_count
+import lib.settings
 
-# ログの設定
-logging.config.fileConfig('./log/log.conf')
-log = logging.getLogger('getlog')
-
-# configファイルの読み込み
-config = ConfigParser.ConfigParser()
-config.read('./conf/settings.conf')
+log = lib.settings.log
 
 
 class TweetThread(Thread):
@@ -43,7 +36,8 @@ class TweetThread(Thread):
                     # キューが空になったら終了
                     log.debug('[ End TweetThread ]\n')
                     break
-                i += 1
+                if i < 12:
+                    i += 1
                 # 1.5^(ループ数)秒待機
                 w = pow(a, i)
                 time.sleep(w)
@@ -75,47 +69,86 @@ class PrintThread(Thread):
 
 class GetInfoThread(Thread):
 
-    def __init__(self, queue):
+    def __init__(self, queue, html):
         super(GetInfoThread, self).__init__()
         self.daemon = True
         self.queue = queue
+        self.html = html
 
     def run(self):
         log.debug('[ Start GetInfoThread ]')
-        Soup = soupinfo("?c=lecture_information")
-        # BeautifulSoup4で取得したhtmlからデータ抽出
-        add_info(Soup, self.queue)
-        del_deactive_info()
+        info_list = collect_info(self.html)
+        lib.add_db.add_info_to_queue(self.queue, *info_list)
+        del_old_info()
         log.debug('[ End GetInfoThread ]')
 
 
 class GetCancelThread(Thread):
 
-    def __init__(self, queue):
+    def __init__(self, queue, html):
         super(GetCancelThread, self).__init__()
         self.daemon = True
         self.queue = queue
+        self.html = html
 
     def run(self):
         log.debug('[ Start GetCancelThread ]')
-        Soup = soupinfo("?c=lecture_cancellation")
-        # BeautifulSoup4で取得したhtmlからデータ抽出
-        add_cancel(Soup, self.queue)
-        del_deactive_cancel()
+        cancel_list = collect_cancel(self.html)
+        lib.add_db.add_cancel_to_queue(self.queue, *cancel_list)
+        del_old_cancel()
         log.debug('[ End GetCancelThread ]')
 
 
 class GetNewsThread(Thread):
 
-    def __init__(self, queue):
+    def __init__(self, queue, html):
         super(GetNewsThread, self).__init__()
         self.daemon = True
         self.queue = queue
+        self.html = html
 
     def run(self):
         log.debug('[ Start GetNewsThread ]')
-        Soup = soupinfo("?c=news")
         # BeautifulSoup4で取得したhtmlからデータ抽出
-        add_news(Soup, self.queue)
-        del_deactive_news()
+        news_list = collect_news(self.html)
+        lib.add_db.add_news_to_queue(self.queue, *news_list)
+        del_old_news()
         log.debug('[ End GetNewsThread ]')
+
+
+def define_do(q, tweet, *htmls):
+    GIThread = GetInfoThread(q, htmls[0])
+    GCThread = GetCancelThread(q, htmls[1])
+    NwThread = GetNewsThread(q, htmls[2])
+    if tweet is False:
+        OutThread = TweetThread(q)
+    else:
+        OutThread = PrintThread(q)
+
+    # 各スレッド開始
+    GIThread.start()
+    GCThread.start()
+    NwThread.start()
+    OutThread.start()
+
+    # 全てのスレッドが終了するまで待機
+    GIThread.join()
+    GCThread.join()
+    NwThread.join()
+    OutThread.join()
+
+
+def create_tables(q, *htmls):
+    GIThread = GetInfoThread(q, htmls[0])
+    GCThread = GetCancelThread(q, htmls[1])
+    NwThread = GetNewsThread(q, htmls[2])
+
+    # 各スレッド開始
+    GIThread.start()
+    GCThread.start()
+    NwThread.start()
+
+    # 全てのスレッドが終了するまで待機
+    GIThread.join()
+    GCThread.join()
+    NwThread.join()

@@ -1,25 +1,13 @@
 # coding:utf-8
 import tweepy
-import logging.config
-import logging
-import ConfigParser
+import settings
 
-logging.config.fileConfig('./log/log.conf')
-log = logging.getLogger('getlog')
-config = ConfigParser.ConfigParser()
-config.read('./conf/settings.conf')
-
-CK = config.get('twitter', 'CK')
-CS = config.get('twitter', 'CS')
-AT = config.get('twitter', 'AT')
-AS = config.get('twitter', 'AS')
 try:
-    auth = tweepy.OAuthHandler(CK, CS)
-    auth.set_access_token(AT, AS)
+    auth = tweepy.OAuthHandler(settings.CK, settings.CS)
+    auth.set_access_token(settings.AT, settings.AS)
     api = tweepy.API(auth_handler=auth, wait_on_rate_limit=True)
 except Exception as e:
     log.exception(e)
-    raise
 
 
 def get_api():
@@ -36,7 +24,7 @@ def tweet(t):
 def format_info(*args):
     tweet_text = u"\n授業名：%s\n教員名：%s\n日程：%s, %s限\n概要：%s\n詳細：%s" \
                  % (args[0], args[1], args[2], args[3], args[4], args[5])
-    num = u" #lec%s" % args[8]
+    num = u" #lec%s" % args[10]
     if 131 >= len(tweet_text) > 0:
         tweet_text += num
         return tweet_text
@@ -64,7 +52,7 @@ def format_news(*args):
     else:
         tweet_text = u"\n掲載日：%s\n詳細：%s" % (args[0], args[1])
         link = u'\nリンク:%s' % args[2]
-        num = u" #news%s" % args[3]
+        num = u" #news%s" % args[4]
     # TwitterでのURLの文字数は22又は23
     if 95 >= len(tweet_text) > 0:
         tweet_text += link

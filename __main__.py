@@ -1,75 +1,28 @@
 # coding: utf-8
-import main
+from main import create_tables, define_do
 import sys
+from lib.login import soupinfo
 from Queue import Queue
-from lib.db_cancel import deactive_cancel, id_cancel
-from lib.db_info import deactive_info, id_info
-from lib.db_news import deactive_news, id_news
+from lib.db_cancel import id_cancel
+from lib.db_info import id_info
+from lib.db_news import id_news
+import lib.settings
+from logging import StreamHandler, DEBUG
 import argparse
 
 
-def default_do(q):
-    GIThread = main.GetInfoThread(q)
-    GCThread = main.GetCancelThread(q)
-    NwThread = main.GetNewsThread(q)
-    TwThread = main.TweetThread(q)
-
-    deactive_info()
-    deactive_cancel()
-    deactive_news()
-
-    # 各スレッド開始
-    GIThread.start()
-    GCThread.start()
-    NwThread.start()
-    TwThread.start()
-    # 全てのスレッドが終了するまで待機
-    GIThread.join()
-    GCThread.join()
-    NwThread.join()
-    TwThread.join()
-
-
-def print_do(q):
-    GIThread = main.GetInfoThread(q)
-    GCThread = main.GetCancelThread(q)
-    NwThread = main.GetNewsThread(q)
-    PrThread = main.PrintThread(q)
-
-    deactive_info()
-    deactive_cancel()
-    deactive_news()
-
-    # 各スレッド開始
-    GIThread.start()
-    GCThread.start()
-    NwThread.start()
-    PrThread.start()
-    # 全てのスレッドが終了するまで待機
-    GIThread.join()
-    GCThread.join()
-    NwThread.join()
-    PrThread.join()
-
-
-def operate_DB(q):
-    GIThread = main.GetInfoThread(q)
-    GCThread = main.GetCancelThread(q)
-    NwThread = main.GetNewsThread(q)
-
-    # 各スレッド開始
-    GIThread.start()
-    GCThread.start()
-    NwThread.start()
-    # 全てのスレッドが終了するまで待機
-    GIThread.join()
-    GCThread.join()
-    NwThread.join()
-
-if __name__ == "__main__":
+def main():
     q = Queue()
     parser = argparse.ArgumentParser(
         description="Automatically collect the lecture information of Kyoto Institute of Technology and tweet update.")
+    parser.add_argument("-v",
+                        "--verbose",
+                        dest="verbose",
+                        default=False,
+                        help="Debug on CLI. Show more information on console window.",
+                        action="store_true"
+                        )
+
     parser.add_argument("-n",
                         "--no-tweet",
                         dest="notweet",
@@ -111,6 +64,14 @@ if __name__ == "__main__":
     name = parser.parse_args().db_name
     nodata = u"お問い合わせされた情報は現在存在しません。"
 
+    if parser.parse_args().verbose is True:
+        log = lib.settings.log
+        shandler = StreamHandler()
+        shandler.setLevel(DEBUG)
+        log.addHandler(shandler)
+    else:
+        pass
+
     if len(ids) > 0:
         # -i,-dが設定されている時
         for id in ids:
@@ -129,13 +90,12 @@ if __name__ == "__main__":
             sys.exit()
     else:
         pass
-
+    htmls = soupinfo(*lib.settings.urls)
     if parser.parse_args().create is True:
         # -cが指定されている時。テーブル作成のみ
-        operate_DB(q)
-    elif parser.parse_args().notweet is True:
-        # -nが指定されている時。更新はするがツイートはしない。
-        print_do(q)
+        create_tables(q, *htmls)
     else:
-        # デフォルト
-        default_do(q)
+        define_do(q, parser.parse_args().notweet, *htmls)
+
+if __name__ == "__main__":
+    main()
