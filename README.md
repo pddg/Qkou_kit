@@ -48,26 +48,12 @@ $ pip install -r requirements.txt
 ここから設定に入ります。
 
 ```bash
-$ cd conf
-$ cp settings_example.conf settings.conf
-$ vim settings.conf
-[shibboleth]
-user = # 学籍番号の最初の1をbに変えた値
-pass = # シボレス認証用のパスワード
-
-[mysql]
-user = # MySQLで該当のデータベースを使用するユーザ名
-pass = # 上記ユーザのパスワード
-host = # MySQLの場所
-DBname = # データベース名
-
-[twitter]
-CK = # Consumer Key
-CS = # Cnsumer Secret
-AT = # Access Token
-AS = # Access Secret
-id = # 通知用に使用するTwitter ID
+$ cd lib
+$ cp settings.py.example settings.py
+$ vim settings.py
 ```
+
+settings.pyに設定を記述してください．
 
 -h又は--helpオプションを付けることでヘルプメッセージが表示されます。
 
@@ -82,6 +68,7 @@ and tweet update.
 
 optional arguments:
   -h, --help            show this help message and exit
+  -v, --verbose         Debug on CLI. Show more information on console window.
   -n, --no-tweet        Only update database and show result of that on CLI.
                         In this option, Qkou_kit don't tweet any.
   -c, --create-table    Creating table. You should use this option, if your
@@ -102,70 +89,40 @@ Show information:
 $ cd /path/to/Qkou_kit 
 $ python ../Qkou_kit -c
 $ cat log/debug.log
-2016-03-31 22:47:28,554 - run - DEBUG - [ Start GetInfoThread ]
-2016-03-31 22:47:28,554 - run - DEBUG - [ Start GetCancelThread ]
-2016-03-31 22:47:28,554 - run - DEBUG - [ Start GetNewsThread ]
-2016-03-31 22:47:28,562 - soupinfo - DEBUG - ログイン開始
-2016-03-31 22:47:28,562 - soupinfo - DEBUG - ログイン開始
-2016-03-31 22:47:28,563 - soupinfo - DEBUG - ログイン開始
-2016-03-31 22:47:29,610 - soupinfo - DEBUG - ユーザ名とパスワードを送信完了
-2016-03-31 22:47:29,656 - soupinfo - DEBUG - ユーザ名とパスワードを送信完了
-2016-03-31 22:47:29,658 - soupinfo - DEBUG - ユーザ名とパスワードを送信完了
-2016-03-31 22:47:31,603 - soupinfo - DEBUG - ログイン完了
-2016-03-31 22:47:31,608 - soupinfo - DEBUG - ログイン完了
-2016-03-31 22:47:31,614 - soupinfo - DEBUG - ログイン完了
-2016-03-31 22:47:33,537 - del_deactive_cancel - DEBUG - 古いデータを削除
-2016-03-31 22:47:33,537 - run - DEBUG - [ End GetCancelThread ]
-2016-03-31 22:47:33,636 - add_news - DEBUG - News: 2016.3.30 平成28� … [既存]
-2016-03-31 22:47:33,644 - add_info - DEBUG - 授業名: 物理化学Ⅰma … [既存]
-2016-03-31 22:47:33,676 - add_news - DEBUG - News: 2016.3.30 [重要] � … [既存]
-2016-03-31 22:47:33,701 - add_info - DEBUG - 授業名: 数学演習Ⅱpb … [既存]
-2016-03-31 22:47:33,707 - add_news - DEBUG - News: 2016.3.30 平成27� … [既存]
-2016-03-31 22:47:33,735 - add_info - DEBUG - 授業名: 基礎解析Ⅱpb … [既存]
-2016-03-31 22:47:33,740 - add_news - DEBUG - News: 2016.3.29 【学部� … [既存]
-2016-03-31 22:47:33,769 - add_info - DEBUG - 授業名: 数学演習Ⅰpb … [既存]
-2016-03-31 22:47:33,776 - add_news - DEBUG - News: 2016.3.28 博士前� … [既存]
-2016-03-31 22:47:33,801 - add_info - DEBUG - 授業名: 基礎解析Ⅰpb … [既存]
-2016-03-31 22:47:33,807 - add_news - DEBUG - News: 2016.3.28 [重要] � … [既存]
-2016-03-31 22:47:33,836 - add_info - DEBUG - 授業名: 高分子構造学 … [既存]
-2016-03-31 22:47:33,843 - add_news - DEBUG - News: 2016.3.25 【大学� … [既存]
-2016-03-31 22:47:33,868 - add_info - DEBUG - 授業名: 高分子機能工学実験Ⅰ … [既存]
-2016-03-31 22:47:33,873 - add_news - DEBUG - News: 2016.3.25 2016年度 … [既存]
-2016-03-31 22:47:33,900 - add_news - DEBUG - News: 2016.3.24 平成28� … [既存]
-2016-03-31 22:47:33,908 - add_info - DEBUG - 授業名: 認知的インタラクションデザイン学 … [既存]
-2016-03-31 22:47:33,934 - add_news - DEBUG - News: 2016.3.23 【至急� … [既存]
-2016-03-31 22:47:33,942 - add_info - DEBUG - 授業名: 学術国際情報mf … [既存]
-2016-03-31 22:47:33,959 - add_news - DEBUG - News: 2016.3.14 [重要] � … [既存]
-2016-03-31 22:47:33,975 - add_info - DEBUG - 授業名: 生物機能学実験Ⅱ … [既存]
-2016-03-31 22:47:33,981 - add_news - DEBUG - News: 2016.3.4 証明書� … [既存]
-2016-03-31 22:47:34,010 - add_info - DEBUG - 授業名: 学術国際情報md … [既存]
-2016-03-31 22:47:34,017 - add_news - DEBUG - News: 2016.3.1 平成２� … [既存]
-2016-03-31 22:47:34,043 - add_info - DEBUG - 授業名: 学術国際情報mc … [既存]
-2016-03-31 22:47:34,049 - add_news - DEBUG - News: 2016.3.1 平成２� … [既存]
-2016-03-31 22:47:34,078 - add_info - DEBUG - 授業名: 物理学基礎実験Ａma … [既存]
-2016-03-31 22:47:34,085 - add_news - DEBUG - News: 2016.2.24 自然再� … [既存]
-2016-03-31 22:47:34,110 - add_info - DEBUG - 授業名: ジェロントロジー入門（超高齢社会のユニバーサルデザイン） … [既存]
-2016-03-31 22:47:34,120 - add_news - DEBUG - News: 2016.2.15 平成28� … [既存]
-2016-03-31 22:47:34,143 - add_info - DEBUG - 授業名: 生体分子機能化学 … [既存]
-2016-03-31 22:47:34,149 - add_news - DEBUG - News: 2016.2.1 平成28� … [既存]
-2016-03-31 22:47:34,177 - add_info - DEBUG - 授業名: 化学基礎実験ma … [既存]
-2016-03-31 22:47:34,196 - add_news - DEBUG - News: 2016.2.1 平成27 � … [既存]
-2016-03-31 22:47:34,216 - add_info - DEBUG - 授業名: 都市史Ⅰ … [既存]
-2016-03-31 22:47:34,224 - add_news - DEBUG - News: 2016.1.28 中世に� … [既存]
-2016-03-31 22:47:34,258 - add_info - DEBUG - 授業名: 分析化学mb … [既存]
-2016-03-31 22:47:34,265 - add_news - DEBUG - News: 2016.1.25 平成28� … [既存]
-2016-03-31 22:47:34,301 - add_info - DEBUG - 授業名: 有機化学演習(生) … [既存]
-2016-03-31 22:47:34,308 - add_news - DEBUG - News: 2016.1.14 平成28� … [既存]
-2016-03-31 22:47:34,332 - del_deactive_info - DEBUG - 古いデータを削除
-2016-03-31 22:47:34,332 - run - DEBUG - [ End GetInfoThread ]
-2016-03-31 22:47:34,349 - add_news - DEBUG - News: 2016.1.13 平成27� … [既存]
-2016-03-31 22:47:34,381 - add_news - DEBUG - News: 2016.1.4 技術検� … [既存]
-2016-03-31 22:47:34,435 - add_news - DEBUG - News: 2016.1.4 技術検� … [既存]
-2016-03-31 22:47:34,466 - add_news - DEBUG - News: 2015.12.22 平成27� … [既存]
-2016-03-31 22:47:34,492 - add_news - DEBUG - News: 2015.12.3 平成27� … [既存]
-2016-03-31 22:47:34,518 - add_news - DEBUG - News: 2015.10.15 平成28� … [既存]
-2016-03-31 22:47:34,542 - add_news - DEBUG - News: 2015.4.13 学生定� … [既存]
-2016-03-31 22:47:34,556 - run - DEBUG - [ End GetNewsThread ]
+2016-05-01 18:25:02,121 - soupinfo - DEBUG - ログイン開始
+2016-05-01 18:25:02,438 - soupinfo - DEBUG - ユーザ名とパスワードを送信完了
+2016-05-01 18:25:03,772 - soupinfo - DEBUG - ログイン完了
+2016-05-01 18:25:04,325 - soupinfo - DEBUG - URL: ?c=lecture_information … [完了]
+2016-05-01 18:25:04,921 - soupinfo - DEBUG - URL: ?c=lecture_cancellation … [完了]
+2016-05-01 18:25:06,104 - soupinfo - DEBUG - URL: ?c=news … [完了]
+2016-05-01 18:25:06,141 - run - DEBUG - [ Start GetInfoThread ]
+2016-05-01 18:25:06,142 - run - DEBUG - [ Start GetCancelThread ]
+2016-05-01 18:25:06,206 - run - DEBUG - [ Start GetNewsThread ]
+2016-05-01 18:25:06,300 - add_info - DEBUG - 授業名: 電子システム工学セミナーⅠ … [既存]
+2016-05-01 18:25:06,307 - add_cancel - DEBUG - 授業名: 有機化学Ⅰmb … [既存]
+2016-05-01 18:25:06,307 - add_news - DEBUG - News: 2016.4.28 平成２� … [既存]
+2016-05-01 18:25:06,882 - add_info - DEBUG - 授業名: 科学と芸術の出会い … [既存]
+2016-05-01 18:25:06,898 - add_news - DEBUG - News: 2016.4.27 1回生（ … [既存]
+2016-05-01 18:25:06,899 - add_cancel - DEBUG - 授業名: 蛋白質分子工学 … [既存]
+
+省略
+
+2016-05-01 18:25:07,528 - add_cancel - DEBUG - 授業名: 情報処理演習ma … [既存]
+2016-05-01 18:25:07,530 - del_old_news - DEBUG - [ GetNewsThread ] 最終更新が2016-04-30 18:25:01.957592以前の古いデータを削除
+2016-05-01 18:25:07,530 - run - DEBUG - [ End GetNewsThread ]
+2016-05-01 18:25:07,538 - add_info - DEBUG - 授業名: ガラス・アモルファス材料科学 … [既存]
+
+省略
+
+2016-05-01 18:25:07,604 - add_info - DEBUG - 授業名: 論理設計(情)(電) … [既存]
+2016-05-01 18:25:07,615 - del_old_cancel - DEBUG - [ GetCancelThread ] 最終更新が2016-04-30 18:25:01.957592以前の古いデータを削除
+2016-05-01 18:25:07,615 - run - DEBUG - [ End GetCancelThread ]
+
+省略
+
+2016-05-01 18:25:09,354 - add_info - DEBUG - 授業名: 生体分子機能化学 … [既存]
+2016-05-01 18:25:09,363 - del_old_info - DEBUG - [ GetInfoThread ] 最終更新が2016-04-30 18:25:01.957592以前の古いデータを削除
+2016-05-01 18:25:09,363 - run - DEBUG - [ End GetInfoThread ]
 ```
 
 うまくいけばdebug.logに以上のような感じで出力され、error.logにはなにも出力されていないと思います。
@@ -222,7 +179,6 @@ pkill -u [username] -f 'stream.py'
 
 ##今後の課題
 
-* ストリームがたまに落ちて復帰してこない時がある
 * 実行が遅い(もう限界？)
 * 連続してツイートする際の遅延をもうちょっとインテリジェンスに
 * サーバの維持費(お金欲しい)
