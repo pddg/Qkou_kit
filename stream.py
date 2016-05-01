@@ -10,19 +10,14 @@ import logging
 import logging.config
 from lib.db_info import id_info
 from lib.db_news import id_news
-import ConfigParser
+import lib.settings
 
-# ログの設定
-logging.config.fileConfig('./log/log.conf')
-log = logging.getLogger('getlog')
+log = lib.settings.log
 
-# 設定の読み込み
-config = ConfigParser.ConfigParser()
-config.read('./conf/settings.conf')
+debug_id = lib.settings.tw_id
 
-auth = tweepy.OAuthHandler(
-    config.get('twitter', 'CK'), config.get('twitter', 'CS'))
-auth.set_access_token(config.get('twitter', 'AT'), config.get('twitter', 'AS'))
+auth = tweepy.OAuthHandler(lib.settings.CK, lib.settings.CS)
+auth.set_access_token(lib.settings.AT, lib.settings.AS)
 api = tweepy.API(auth_handler=auth, wait_on_rate_limit=True)
 mydata = api.me()
 myid = mydata.id
@@ -58,13 +53,13 @@ class StreamRecieverThread(Thread):
             try:
                 stream.userstream()
             except Exception as e:
-                api.send_direct_message(screen_name=config.get(
-                    'twitter', 'id'), text="Stream down. And now restarting. Wait 60s...")
+                api.send_direct_message(
+                    screen_name=debug_id, text="Stream down. And now restarting. Wait 60s...")
                 log.exception(e)
                 time.sleep(60)
                 stream = tweepy.Stream(auth, l)
                 api.send_direct_message(
-                    screen_name=config.get('twitter', 'id'), text="Start streaming.")
+                    screen_name=debug_id, text="Start streaming.")
 
 
 def get_news(id):
@@ -172,5 +167,5 @@ def StartThreads():
 
 if __name__ == "__main__":
     api.send_direct_message(
-        screen_name=config.get('twitter', 'id'), text="Qkoubot start.")
+        screen_name=debug_id, text="Qkoubot start.")
     StartThreads()
