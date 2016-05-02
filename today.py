@@ -53,19 +53,16 @@ def get_today_info():
     if holiday is None:
         # Tweet
         if len(today) is 0:
-            # tweet(u"%s 本日休講はありません" % (date))
-            print(u"%s 本日休講はありません" % (date))
+            tweet(u"%s 本日休講はありません" % (date))
         else:
             today = map(decode_utf8, today)
             i = u", ".join(today)
             t = u"%s 本日の休講\n%s" % (date, i)
             if len(t) < 140:
                 tweet(t)
-                # print t
             else:
                 all = [t[i:i + 120] for i in range(0, len(t), 120)]
                 for one in all:
-                    # print one
                     tweet(t[0:140])
     else:
         t = u'本日は%sです．課題やレポートは終わりましたか？意義のある祝日をお過ごしください．' % (
