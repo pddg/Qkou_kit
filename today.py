@@ -43,7 +43,7 @@ def del_yesterday_info():
 
 def get_today_info():
     # 今日の日付を取得
-    d = datetime.now()  # + timedelta(days=3)
+    d = datetime.now()
     # 祝日を取得
     holiday = lib.jholiday.holiday_name(date=datetime.date(d))
     date = u"%s/%s/%s" % (d.year, d.month, d.day)
@@ -56,14 +56,23 @@ def get_today_info():
             tweet(u"%s 本日休講はありません" % (date))
         else:
             today = map(decode_utf8, today)
-            i = u", ".join(today)
-            t = u"%s 本日の休講\n%s" % (date, i)
-            if len(t) < 140:
+            s = u", ".join(today)
+            t = u"%s 本日の休講\n%s" % (date, s)
+            if len(t) < 135:
                 tweet(t)
             else:
-                all = [t[i:i + 120] for i in range(0, len(t), 120)]
+                a = u""
+                i = 0
+                while len(a) < 120:
+                    a = a + u"%s, " % (today[i])
+                    i += 1
+                i -= 1
+                all = [today[o:o + i] for o in range(0, len(today), i)]
+                head = u"本日の休講"
                 for one in all:
-                    tweet(t[0:140])
+                    s = u", ".join(one)
+                    tweet(u"%s %s\n%s" % (date, head, s))
+                    head = u"続き"
     else:
         t = u'本日は%sです．課題やレポートは終わりましたか？意義のある祝日をお過ごしください．' % (
             holiday)
@@ -74,5 +83,5 @@ def decode_utf8(txt):
     return txt.decode('utf-8')
 
 if __name__ == "__main__":
-    del_yesterday_info()
+    # del_yesterday_info()
     get_today_info()
