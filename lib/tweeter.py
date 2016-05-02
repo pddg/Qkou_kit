@@ -1,6 +1,7 @@
-# coding:utf-8
+# coding: utf-8
 import tweepy
 import settings
+log = settings.log
 
 try:
     auth = tweepy.OAuthHandler(settings.CK, settings.CS)

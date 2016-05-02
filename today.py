@@ -42,21 +42,26 @@ def del_yesterday_info():
 def get_today_info():
     # 今日の日付を取得
     d = datetime.now()
-    date = "%s/%s/%s" % (d.year, d.month, d.day)
+    date = u"%s/%s/%s" % (d.year, d.month, d.day)
 
     # 取得した日付を元にDBから情報を取得
     today = todayinfo(date)
 
     # Tweet
     if len(today) is 0:
-        tweet("%s 本日休講はありません" % (date))
+        tweet(u"%s 本日休講はありません" % (date))
     else:
-        i = ", ".join(today)
-        t = "%s 本日の休講\n%s" % (date, i)
+        today = map(decode_utf8, today)
+        i = u", ".join(today)
+        t = u"%s 本日の休講\n%s" % (date, i)
         if len(t) < 140:
             tweet(t)
         else:
             tweet(t[0:140])
+
+
+def decode_utf8(txt):
+    return txt.decode('utf-8')
 
 if __name__ == "__main__":
     del_yesterday_info()
