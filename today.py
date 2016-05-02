@@ -2,9 +2,11 @@
 from datetime import datetime, timedelta
 import tweepy
 import re
+import sys
 import logging.config
 import logging
 from lib.db_cancel import todayinfo
+import lib.jholiday
 from lib.tweeter import tweet, get_api
 
 logging.config.fileConfig('./log/log.conf')
@@ -41,23 +43,34 @@ def del_yesterday_info():
 
 def get_today_info():
     # 今日の日付を取得
-    d = datetime.now()
+    d = datetime.now()  # + timedelta(days=3)
+    # 祝日を取得
+    holiday = lib.jholiday.holiday_name(date=datetime.date(d))
     date = u"%s/%s/%s" % (d.year, d.month, d.day)
 
     # 取得した日付を元にDBから情報を取得
     today = todayinfo(date)
-
-    # Tweet
-    if len(today) is 0:
-        tweet(u"%s 本日休講はありません" % (date))
-    else:
-        today = map(decode_utf8, today)
-        i = u", ".join(today)
-        t = u"%s 本日の休講\n%s" % (date, i)
-        if len(t) < 140:
-            tweet(t)
+    if holiday is None:
+        # Tweet
+        if len(today) is 0:
+            # tweet(u"%s 本日休講はありません" % (date))
+            print(u"%s 本日休講はありません" % (date))
         else:
-            tweet(t[0:140])
+            today = map(decode_utf8, today)
+            i = u", ".join(today)
+            t = u"%s 本日の休講\n%s" % (date, i)
+            if len(t) < 140:
+                tweet(t)
+                # print t
+            else:
+                all = [t[i:i + 120] for i in range(0, len(t), 120)]
+                for one in all:
+                    # print one
+                    tweet(t[0:140])
+    else:
+        t = u'本日は%sです．課題やレポートは終わりましたか？意義のある祝日をお過ごしください．' % (
+            holiday)
+        tweet(t)
 
 
 def decode_utf8(txt):
