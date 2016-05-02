@@ -1,4 +1,5 @@
 lib/settings.py
+conf/settings.conf
 .project
 .pydevproject
 .settings
