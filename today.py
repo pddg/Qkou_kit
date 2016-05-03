@@ -83,5 +83,5 @@ def decode_utf8(txt):
     return txt.decode('utf-8')
 
 if __name__ == "__main__":
-    # del_yesterday_info()
+    del_yesterday_info()
     get_today_info()
