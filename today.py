@@ -74,8 +74,8 @@ def get_today_info():
                     tweet(u"%s %s\n%s" % (date, head, s))
                     head = u"続き"
     else:
-        t = u'本日は%sです．課題やレポートは終わりましたか？意義のある祝日をお過ごしください．' % (
-            holiday)
+        t = u'%s 本日は%sです．課題やレポートは終わりましたか？意義のある祝日をお過ごしください．' % (
+            date, holiday)
         tweet(t)
 
 
