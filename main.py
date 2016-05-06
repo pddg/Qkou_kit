@@ -78,7 +78,11 @@ class GetInfoThread(Thread):
     def run(self):
         log.debug('[ Start GetInfoThread ]')
         info_list = collect_info(self.html)
-        lib.add_db.add_info_to_queue(self.queue, *info_list)
+        update = lib.add_db.add_info_to_queue(self.queue, *info_list)
+        if update is 0:
+            log.debug('[ GetInfoThread ] 更新はありませんでした．')
+        else:
+            log.debug('[ GetInfoThread ] %s個の情報を更新しました．', update)
         del_old_info()
         log.debug('[ End GetInfoThread ]')
 
@@ -94,7 +98,11 @@ class GetCancelThread(Thread):
     def run(self):
         log.debug('[ Start GetCancelThread ]')
         cancel_list = collect_cancel(self.html)
-        lib.add_db.add_cancel_to_queue(self.queue, *cancel_list)
+        update = lib.add_db.add_cancel_to_queue(self.queue, *cancel_list)
+        if update is 0:
+            log.debug('[ GetCancelThread ] 更新はありませんでした．')
+        else:
+            log.debug('[ GetCancelThread ] %s個の情報を更新しました．', update)
         del_old_cancel()
         log.debug('[ End GetCancelThread ]')
 
@@ -111,7 +119,11 @@ class GetNewsThread(Thread):
         log.debug('[ Start GetNewsThread ]')
         # BeautifulSoup4で取得したhtmlからデータ抽出
         news_list = collect_news(self.html)
-        lib.add_db.add_news_to_queue(self.queue, *news_list)
+        update = lib.add_db.add_news_to_queue(self.queue, *news_list)
+        if update is 0:
+            log.debug('[ GetNewsThread ] 更新はありませんでした．')
+        else:
+            log.debug('[ GetNewsThread ] %s個の情報を更新しました．', update)
         del_old_news()
         log.debug('[ End GetNewsThread ]')
 
