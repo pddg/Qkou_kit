@@ -188,3 +188,6 @@ pkill -u [username] -f 'stream.py'
 [@pudding_info](https://twitter.com/pudding_info)
 ホームページ及びブログは以下
 [poyo.info](https://www.poyo.info)
+
+##ライセンス
+MIT

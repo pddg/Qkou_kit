@@ -14,7 +14,7 @@ import argparse
 def main():
     q = Queue()
     parser = argparse.ArgumentParser(
-        description="Automatically collect the lecture information of Kyoto Institute of Technology and tweet update.")
+        description="Automatically collect the lecture information of Kyoto Institute of Technology, and tweet its updates.")
     parser.add_argument("-v",
                         "--verbose",
                         dest="verbose",
@@ -35,19 +35,19 @@ def main():
                         "--create-table",
                         dest="create",
                         default=False,
-                        help="Creating table. You should use this option, if your MySQL server doesn't have the table.",
+                        help="Creating table. If your MySQL server doesn't have the table you should use this option.",
                         action="store_true"
                         )
 
     group = parser.add_argument_group(
-        'Show information', 'This option is showing the information of lecture and news.')
+        'Show information', 'This option is showing the information of lecture and news by id.')
     group.add_argument("-i",
                        "--id",
                        dest="info_id",
                        default="",
                        type=str,
                        nargs="*",
-                       help="To show information of some lectures, input their ids."
+                       help="To show information of some lectures, input their id numbers."
                        )
 
     group.add_argument("-d",
