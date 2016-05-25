@@ -63,6 +63,53 @@ class StreamRecieverThread(Thread):
                     screen_name=debug_id, text="Start streaming.")
 
 
+def get_news(id):
+    sys.stdout = codecs.lookup('utf_8')[-1](sys.stdout)
+    try:
+        news = id_news(id)
+    except Exception as e:
+        log.exception(e)
+    if news is not False:
+        if news is not 0:
+            try:
+                update = news.up_date.decode('utf-8')
+                detail = news.detail.decode('utf-8')
+                if len(news.link) is not 0:
+                    link = news.link.decode('utf-8')
+                return u"掲載日:%s\n詳細:%s\nリンク:%s" % (update, detail, link)
+            except Exception as e:
+                log.exception(e)
+        else:
+            return u"お問い合わせされた情報は現在存在しません。"
+
+    else:
+        return u"DBエラーです。情報が取得できませんでした。"
+
+
+def get_info(id):
+    sys.stdout = codecs.lookup('utf_8')[-1](sys.stdout)
+    try:
+        info = id_info(id)
+    except Exception as e:
+        log.exception(e)
+    if info is not False:
+        if info is not 0:
+            try:
+                subject = info.subject.decode('utf-8')
+                teacher = info.teacher.decode('utf-8')
+                week = info.week.decode('utf-8')
+                period = info.period.decode('utf-8')
+                detail = info.detail.decode('utf-8')
+                return u"授業名：%s\n教員名：%s\n日程：%s, %s\n詳細：%s" % (subject, teacher, week, period, detail)
+            except Exception as e:
+                log.exception(e)
+        else:
+            return u"お問い合わせされた授業関係連絡は現在存在しません。"
+
+    else:
+        return u"DBエラーです。情報が取得できませんでした。"
+
+
 def tweetassembler(**args):
     in_reply_to_status = args['in_reply_to_status']
     if in_reply_to_status is not None:
@@ -82,11 +129,11 @@ def tweetassembler(**args):
                 if info_num is not None:
                     qkou_id = info_num.group()
                     log.debug("[ Stream ] Infoの詳細を取得")
-                    dm_text = id_info(qkou_id)
+                    dm_text = get_info(qkou_id)
                 elif news_num is not None:
                     news_id = news_num.group()
                     log.debug("[ Stream ] Newsの詳細を取得")
-                    dm_text = id_news(news_id)
+                    dm_text = get_news(news_id)
                 else:
                     pass
                 try:
