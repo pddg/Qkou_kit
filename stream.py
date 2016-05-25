@@ -8,7 +8,7 @@ from threading import Thread
 from Queue import Queue
 import logging
 import logging.config
-from lib.db_info import id_info, get_info
+from lib.db_info import id_info
 from lib.db_news import id_news
 import lib.settings
 
