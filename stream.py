@@ -8,7 +8,7 @@ from threading import Thread
 from Queue import Queue
 import logging
 import logging.config
-from lib.db_info import id_info
+from lib.db_info import id_info, get_info
 from lib.db_news import id_news
 import lib.settings
 
@@ -31,6 +31,7 @@ class Listener(tweepy.streaming.StreamListener):
 
     def on_status(self, status):
         if status.in_reply_to_user_id == myid:
+            log.debug("[ Stream ] リプライを受信")
             self.queue.put(status)
         else:
             pass
@@ -80,16 +81,18 @@ def tweetassembler(**args):
                 news_num = re.search("(?<=news)[0-9]*", hashtag)
                 if info_num is not None:
                     qkou_id = info_num.group()
-                    # DBから情報を取得
-                    dm_text = get_info(qkou_id)
+                    log.debug("[ Stream ] Infoの詳細を取得")
+                    dm_text = id_info(qkou_id)
                 elif news_num is not None:
                     news_id = news_num.group()
-                    dm_text = get_news(news_id)
+                    log.debug("[ Stream ] Newsの詳細を取得")
+                    dm_text = id_news(news_id)
                 else:
                     pass
                 try:
                     api.send_direct_message(
                         user_id=in_reply_to_status.user.id, text=dm_text)
+                    log.debug('[ Stream ] DMを送信')
                 except Exception as e:
                     log.exception(e)
             else:
