@@ -72,6 +72,28 @@ def tweetassembler(**args):
             # リプライ元のステータスを取得
             qkou_status = api.get_status(id)
             entities = qkou_status.entities['hashtags']
+            # ハッシュタグを含まない場合の判定
+            if len(entities) > 0:
+                hashtag = entities[0]['text']
+                # ハッシュタグから数字だけ抽出
+                info_num = re.search("(?<=lec)[0-9]*", hashtag)
+                news_num = re.search("(?<=news)[0-9]*", hashtag)
+                if info_num is not None:
+                    qkou_id = info_num.group()
+                    # DBから情報を取得
+                    dm_text = get_info(qkou_id)
+                elif news_num is not None:
+                    news_id = news_num.group()
+                    dm_text = get_news(news_id)
+                else:
+                    pass
+                try:
+                    api.send_direct_message(
+                        user_id=in_reply_to_status.user.id, text=dm_text)
+                except Exception as e:
+                    log.exception(e)
+            else:
+                pass
 
 
 class CoreThread(Thread):
