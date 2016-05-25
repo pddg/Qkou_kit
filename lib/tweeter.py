@@ -48,7 +48,7 @@ def format_news(*args):
     if len(args[2]) is 0:
         tweet_text = u"\n掲載日：%s\n詳細：%s" % (args[0], args[1])
         link = u''
-        num = u" #news%s" % args[3]
+        num = u" #news%s" % args[4]
     # linkがある場合
     else:
         tweet_text = u"\n掲載日：%s\n詳細：%s" % (args[0], args[1])
