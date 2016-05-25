@@ -75,8 +75,8 @@ def get_news(id):
                 update = news.up_date.decode('utf-8')
                 detail = news.detail.decode('utf-8')
                 if len(news.link) is not 0:
-                    link = news.link.decode('utf-8')
-                return u"掲載日:%s\n詳細:%s\nリンク:%s" % (update, detail, link)
+                    link_ = news.link.decode('utf-8')
+                return u"掲載日:%s\n詳細:%s\nリンク:%s" % (update, detail, link_)
             except Exception as e:
                 log.exception(e)
         else:
