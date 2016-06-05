@@ -36,7 +36,7 @@ def add_info(subject, teacher, week, period, abstract, detail, first, update, un
             return new_id
         else:
             # 更新かどうか確認
-            if ex_info.renew_hash == renew_hash is False:
+            if ex_info.renew_hash != renew_hash:
                 log.debug('授業名: %s … [更新]', subject)
                 ex_info.detail = detail
                 ex_info.up_date = update
