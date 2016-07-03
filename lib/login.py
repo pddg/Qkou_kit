@@ -3,6 +3,8 @@
 import mechanize
 from bs4 import BeautifulSoup
 import settings
+import models
+from tweeter import tweet
 
 log = settings.log
 
@@ -29,7 +31,26 @@ def soupinfo(*urls):
         br.submit()  # 続行ボタンを押すため
         log.debug('ログイン完了')
     except Exception as e:
+        session = models.Session()
+        fault = session.query(models.Fault).filter(models.Fault.now == 1).first()
+        if fault is None:
+            new_fault = models.Fault(now=1, created_at=settings.now, status=e.encode('utf-8'))
+            session.add(new_fault)
+            session.commit()
+            tweet('%s 学務課サーバへのログインに失敗しました．障害が発生している可能性があります．'
+                  % (settings.now.strftime('%Y/%m/%d %H:%M:%S')))
+        session.close()
         log.exception(e)
+    # 障害復旧時
+    session = models.Session()
+    fault = session.query(models.Fault).filter(models.Fault.now == 1).first()
+    if fault is not None:
+        fault.now = 0
+        fault.ended_at = settings.now
+        session.commit()
+        tweet('%s 学務課サーバへのログインに成功しました．'
+              % (settings.now.strftime('%Y/%m/%d %H:%M:%S')))
+    session.close()
     htmls = []
     for url in urls:
         target = loginurl + url

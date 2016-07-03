@@ -10,8 +10,6 @@ engine = create_engine('mysql+pymysql://' + settings.mysql_user + ':' +
                        settings.DBname, encoding='utf-8', pool_recycle=3600)
 
 Base = declarative_base()
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
 
 
 class Info(Base):
@@ -100,3 +98,27 @@ class News(Base):
     def __repr__(self):
         return "<News('%s', '%s', '%s', '%s')>"\
             % (self.up_date, self.detail, self.link, self.active)
+
+
+class Fault(Base):
+    __tablename__ = 'fault'
+
+    id = Column(Integer, primary_key=True)
+    now = Column(Integer)
+    created_at = Column(DATETIME)
+    ended_at = Column(DATETIME)
+    status = Column(VARCHAR(length=255))
+
+    def __init__(self, now, created_at, ended_at, status):
+        self.now = now
+        self.created_at = created_at
+        self.ended_at = ended_at
+        self.status = status
+
+    def __repr__(self):
+        return "<Fault('%s', '%s', '%s', '%s')>" \
+            % (self.now, self.created_at, self.ended_at, self.status)
+
+
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
